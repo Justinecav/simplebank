@@ -1,4 +1,4 @@
-module example.com
+module github.com/Justinecav/simplebank.git
 
 go 1.18
 

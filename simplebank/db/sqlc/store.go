@@ -12,6 +12,14 @@ type Store struct {
 	db *sql.DB
 }
 
+// NewStore creates a new store
+func NewStore(db *sql.DB) *Store {
+	return &Store{
+		db:      db,
+		Queries: New(db),
+	}
+}
+
 //execTx  executes a function within a database transaction
 func (store *Store) execTx(ctx context.Context, fn func(*Queries) error) error {
 	tx, err := store.db.BeginTx(ctx, nil)
@@ -63,6 +71,23 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (Trans
 		if err != nil {
 			return err
 		}
+		result.FromEntry, err = q.CreateEntry(ctx, CreateEntryParams{
+			AccountID: arg.FromAccountID,
+			Amount:    -arg.Amount,
+		})
+		if err != nil {
+			return err
+		}
+
+		result.ToEntry, err = q.CreateEntry(ctx, CreateEntryParams{
+			AccountID: arg.ToAccountID,
+			Amount:    arg.Amount,
+		})
+		if err != nil {
+			return err
+		}
+
+		//TODO:Update account
 		return nil
 	})
 	return result, err
