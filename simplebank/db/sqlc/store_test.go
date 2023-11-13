@@ -16,7 +16,7 @@ func TestTransferTx(t *testing.T) {
 	fmt.Println(">before tx ", account1.Balance, account2.Balance)
 
 	//run severeral go routines to make sure transactions are proper
-	n := 2
+	n := 5
 	amount := int64(10)
 
 	//Channel is used to create to connect to concurrent go routine
@@ -25,9 +25,8 @@ func TestTransferTx(t *testing.T) {
 
 	//the "go" keyword is used to run a go routine
 	for i := 0; i < n; i++ {
-		txName := fmt.Sprintf("tx  %d", i+1)
 		go func() {
-			ctx := context.WithValue(context.Background(), txKey, txName)
+			ctx := context.Background()
 			result, err := store.TransferTx(ctx, TransferTxParams{
 				FromAccountID: account1.ID,
 				ToAccountID:   account2.ID,
