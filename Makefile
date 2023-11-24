@@ -32,4 +32,4 @@ server:
 mock: 
   mockgen -destination db/mock/store.go  github.com/Justinecav/simplebank.git/db/sqlc Store  
 
-.PHONY:postgres createdb dropdb migrateup migratedown migrateup1 migratedown1 sqlc test server mock   
+.PHONY: postgres createdb dropdb migrateup migratedown migrateup1 migratedown1 sqlc test server mock   
