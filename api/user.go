@@ -27,13 +27,12 @@ type createUserResponse struct {
 
 func (server *Server) createUser(ctx *gin.Context) {
 	var req createUserRequest
-	err := ctx.BindJSON(&req)
-	if err != nil {
+	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
 	}
 
-	hashedPassword, err := util.HashPassword(util.RandString(6))
-
+	hashedPassword, err := util.HashPassword(req.Password)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
@@ -56,15 +55,15 @@ func (server *Server) createUser(ctx *gin.Context) {
 			}
 		}
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
 	}
 
-	resp := createUserResponse{
+	rsp := createUserResponse{
 		Username:          user.Username,
 		Fullname:          user.Fullname,
 		Email:             user.Email,
 		PasswordChangedAt: user.PasswordChangedAt,
 		CreatedAt:         user.CreatedAt,
 	}
-
-	ctx.JSON(http.StatusOK, resp)
+	ctx.JSON(http.StatusOK, rsp)
 }
